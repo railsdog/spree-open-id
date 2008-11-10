@@ -59,16 +59,19 @@ class AccountController < Spree::BaseController
         if current_user = User.find_by_identity_url(identity_url)
           session[:user_id] = current_user.id
         else
-          session[:openid_url] = identity_url
           begin
             email = registration["email"]
             # check if a user ewith this email already exists
             user = User.find_by_email(registration["email"])
             if user
               # user will need to authenticate first, then they associate this user with their account
+              session[:openid_url] = identity_url
               redirect_to edit_user_url(user) and return
+            else  
+              # no user but they did provide an email so we can create an account for them
+              user = User.create(:email => email, :identity_url => identity_url)
+              session[:user_id] = user.id
             end
-            # create a new user with this email
           rescue
             # do nothing - most likely user has no email in the profile or just not to send us one
           end      

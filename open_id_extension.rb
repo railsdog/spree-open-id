@@ -21,6 +21,11 @@ class OpenIdExtension < Spree::Extension
     # Add identity_url attribute to the user model
     User.class_eval do
       attr_accessible :identity_url
+      protected
+      def password_required?
+        return false if identity_url
+        crypted_password.blank? || !password.blank?
+      end      
     end
 
     # Add a partial for adding the identity_url field to the user form
