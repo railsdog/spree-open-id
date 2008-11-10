@@ -1,9 +1,18 @@
 <%= stylesheet_link_tag "open_id.css" %>
-<table>
-  <tr>
-    <td width="54"><%= t("OpenID") %>:</td>
-    <td>
-      <%= input "user", "identity_url", {:class => "openid_url", :size => 28} %>
-    </td>
-  </tr>
-</table>
+<% if @user.new_record? %>
+  <table>
+    <tr>
+      <td><%= image_tag "openid-inputicon.gif" %></td>
+      <td>OpenID - Please login as an existing customer</td>
+    </tr>  
+  </table>
+<% else %>
+  <table id="openid-auth">
+    <tr>
+      <td width="54"><%= t("OpenID") %>:</td>
+      <td>
+         <%= input "user", "identity_url", {:class => "openid_url", :size => 28} %>
+      </td>
+    </tr>    
+  </table>
+<% end %>

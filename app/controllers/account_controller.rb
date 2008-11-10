@@ -44,7 +44,7 @@ class AccountController < Spree::BaseController
     identity_url = normalize_url(identity_url) if identity_url
     # Pass optional :required and :optional keys to specify what sreg fields you want.
     # Be sure to yield registration, a third argument in the #authenticate_with_open_id block.
-    authenticate_with_open_id(identity_url, :required => [ :email ], :return_to => "http://localhost:3000/login?email=sean") do |result, identity_url, registration|
+    authenticate_with_open_id(identity_url, :required => [ :email ]) do |result, identity_url, registration|
       current_user = nil
       case result.status
       when :missing
