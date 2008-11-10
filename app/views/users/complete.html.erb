@@ -1,0 +1,20 @@
+<%= error_messages_for :user %>
+<h2><%= t("Complete Signup") %></h2>
+<p>
+  Welcome OpenID user.  Spree accounts require a valid email address, please provide an email address to complete the 
+  registration process.
+</p>
+<% form_for(@user) do |f| %>
+  <table id="user-form">
+    <tr>
+      <td><%= t("Email") %>: </td>
+      <td>
+        <%= error_message_on :user, :email %>
+        <%= f.text_field :email  %>
+        <input type="hidden" name="user[identity_url]" value="<%= session[:openid_url] %>">
+      </td>
+    </tr>
+  </table>
+  <br/>
+  <%= submit_tag t("Complete") %> 
+<% end %>

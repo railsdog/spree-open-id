@@ -7,8 +7,8 @@ class AccountController < Spree::BaseController
   end
 
   def login
-    if session[:openid_url]
-      flash[:notice] = "OpenID authentication successful. Please authenticate with your email and password to associate this existing account with your OpenID URL."
+    if session[:openid_url] && session[:openid_email]
+      flash.now[:notice] = "OpenID authentication successful. Please authenticate with your email and password to associate this existing account with your OpenID URL."
     end
     return unless request.post?
     if using_open_id?
@@ -66,21 +66,23 @@ class AccountController < Spree::BaseController
             if user
               # user will need to authenticate first, then they associate this user with their account
               session[:openid_url] = identity_url
+              session[:openid_email] = email
               redirect_to edit_user_url(user) and return
             else  
+              if email.blank?
+                # user authenticated by their openid provider did not provide an email
+                session[:openid_url] = identity_url
+                redirect_to new_user_url and return
+              end              
               # no user but they did provide an email so we can create an account for them
               user = User.create(:email => email, :identity_url => identity_url)
               session[:user_id] = user.id
             end
           rescue
-            # do nothing - most likely user has no email in the profile or just not to send us one
+            # user has no email in the profile or chose not to send us one
           end      
-
-            # TODO - check if there is already a user with this email
-            #current_user.save
-          #failed_login "Sorry, no user by that identity URL exists"
         end
-      else puts ">>>>>>>>> fail"        
+      else  
       end
     end  
     user_id = session[:user_id]

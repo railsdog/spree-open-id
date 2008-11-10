@@ -6,11 +6,9 @@ class OpenIdExtension < Spree::Extension
   description "Provides OpenID Support for Spree Accounts"
   url "http://spreehq.org"
 
-  # define_routes do |map|
-  #   map.namespace :admin do |admin|
-  #     admin.resources :whatever
-  #   end  
-  # end
+  define_routes do |map|
+    map.resources :users, :member => {:complete => :get}
+  end
 
   def self.require_gems(config)
     config.gem "ruby-openid", :lib => 'openid', :version => '2.0.4'  
@@ -30,9 +28,17 @@ class OpenIdExtension < Spree::Extension
 
     # Add a partial for adding the identity_url field to the user form
     UsersController.class_eval do
-
       before_filter :add_openid_fields
 
+      # if the user is authenticated, we'll render the complete view instead of the stanard new user one
+      new_action.response do |wants|
+        wants.html { render :template => 'users/complete' and next if session[:openid_url] }
+      end
+      
+      create.failure.response do |wants|
+        wants.html { render :template => 'users/complete' and next if session[:openid_url] }        
+      end      
+      
       def add_openid_fields
         @extension_partials << 'identity_url'
       end
