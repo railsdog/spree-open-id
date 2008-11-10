@@ -1,0 +1,35 @@
+<%= stylesheet_link_tag "open_id.css" %>
+<% form_tag '/login' do %>
+  <table>
+    <tr>
+      <td valign="top">
+        <table>
+          <tr>
+            <td><%= t("Email") %>: </td>
+            <td>
+              <%= text_field_tag 'email' %>
+            </td>
+          </tr>
+          <tr>
+            <td><%= t("Password") %>:</td>
+            <td>
+              <%= password_field_tag 'password' %>
+            </td>
+          </tr>
+        </table>
+      </td>
+      <td width="100" align="center"> <%= t("or") %> </td>
+      <td valign="top">
+        <table>
+          <tr>
+            <td width="54"><%= t("OpenID") %>:</td>
+            <td>
+               <%= text_field_tag "openid_url", nil, {:class => "openid_url", :size => 25} %>
+            </td>
+          </tr>    
+        </table>
+      </td>
+    </tr>
+  </table>
+  <p><%= submit_tag t("Log In") %>
+<% end %>
